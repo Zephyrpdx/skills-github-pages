@@ -1,0 +1,679 @@
+{
+  "meta": {
+    "title": "In-Section Activity Content Specification",
+    "curriculum": "Agent-Readable Skills Infrastructure",
+    "version": 1,
+    "description": "One interactive activity per content section for all nine curriculum modules. Each activity inserts immediately after the section body and before the Next button. Completable in under 60 seconds."
+  },
+  "design_constraints": {
+    "max_duration_seconds": 60,
+    "tests": "Core concept of the section only — not peripheral details",
+    "answer_derivability": "Correct answer unambiguously derivable from the section text just read",
+    "state_management": "React state only — no API calls",
+    "skip_allowed": true,
+    "skip_button_style": "ghost"
+  },
+  "activity_types": ["Classify", "Match", "Sequence", "Spot-the-Flaw", "Cover-and-Reconstruct"],
+  "implementation_note": "Each activity renders as a card below the section body and above the Next button. A Skip ghost button allows bypass. Correct answers are revealed on submission and logged to the engagement tracker (key pattern: engagement:module[N]:activity:[section-id]).",
+  "levels": [
+    {
+      "id": "level-1",
+      "title": "Foundations",
+      "modules": [
+        {
+          "id": "m1",
+          "title": "Why Skills Matter: The Problem With Prompts",
+          "activities": [
+            {
+              "section_id": "1.1",
+              "section_title": "The Brittle Prompt Problem",
+              "activity_type": "Classify",
+              "instruction": "Classify each scenario as a cause of prompt brittleness or NOT a cause, before continuing.",
+              "items": [
+                { "id": "A", "text": "A colleague edits a shared prompt to fix one use case." },
+                { "id": "B", "text": "A model vendor releases an update that changes output format subtly." },
+                { "id": "C", "text": "A new team member asks the same question using different phrasing." },
+                { "id": "D", "text": "The AI system is deployed in a new country." },
+                { "id": "E", "text": "An autonomous agent calls the same prompt hundreds of times." }
+              ],
+              "correct_answers": {
+                "cause": ["A", "B", "C", "E"],
+                "not_a_cause": ["D"],
+                "explanation": "Geographic deployment is not cited as a brittleness cause in this section."
+              }
+            },
+            {
+              "section_id": "1.2",
+              "section_title": "The Skill Primitive: A Better Abstraction",
+              "activity_type": "Match",
+              "instruction": "Match each concept to its correct analogy before continuing.",
+              "items": {
+                "concepts": [
+                  { "id": "1", "text": "skill.markdown file" },
+                  { "id": "2", "text": "chunking in human memory" },
+                  { "id": "3", "text": "brittle prompt" }
+                ],
+                "analogies": [
+                  { "id": "A", "text": "A complex behavior condensed into a single accessible unit" },
+                  { "id": "B", "text": "A conversation written for human judgment, not machine contracts" },
+                  { "id": "C", "text": "A software function with defined inputs, outputs, and edge cases" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "concept": "1", "analogy": "C", "explanation": "skill.markdown = software function analogy" },
+                  { "concept": "2", "analogy": "A", "explanation": "chunking = condensed accessible unit" },
+                  { "concept": "3", "analogy": "B", "explanation": "brittle prompt = human conversation, no contract" }
+                ]
+              }
+            },
+            {
+              "section_id": "1.3",
+              "section_title": "A Concrete Comparison",
+              "activity_type": "Spot-the-Flaw",
+              "instruction": "Identify the specific flaw in this routing description before continuing.",
+              "items": [
+                {
+                  "id": "sample",
+                  "text": "description: \"You are a helpful assistant. When asked about competitors, please provide a useful and thorough analysis covering things like their pricing, what their product does, and any weaknesses you know about. Try to be comprehensive and helpful.\""
+                }
+              ],
+              "correct_answers": {
+                "flaws": [
+                  "No concrete trigger phrases — 'When asked about competitors' is too vague for reliable routing.",
+                  "No output shape specified — no schema, column count, or structure for the output.",
+                  "No deterministic contract — 'be comprehensive and helpful' varies every run."
+                ]
+              }
+            },
+            {
+              "section_id": "1.4",
+              "section_title": "Where Skills Live",
+              "activity_type": "Cover-and-Reconstruct",
+              "instruction": "Cover the section and reconstruct the correct directory structure for a skills repository before continuing.",
+              "prompts": [
+                "What are the required elements of a skill directory?",
+                "Where are skills stored, and why does that location matter?"
+              ],
+              "correct_answers": {
+                "required_elements": "A skill is a directory named for the skill (e.g., competitor-analysis/) containing a required skill.markdown (or SKILL.md) file, plus optional supporting files.",
+                "storage_location": "Skills are stored in version-controlled repositories — not in chat windows or shared documents — making them auditable, updatable, and recoverable."
+              }
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Anatomy of a Skill Primitive",
+          "activities": [
+            {
+              "section_id": "2.1",
+              "section_title": "The Two-Part Structure",
+              "activity_type": "Match",
+              "instruction": "Match each element to the correct skill file part (frontmatter or body) before continuing.",
+              "items": {
+                "elements": [
+                  { "id": "1", "text": "name field" },
+                  { "id": "2", "text": "Reasoning Framework" },
+                  { "id": "3", "text": "description field" },
+                  { "id": "4", "text": "Output Specification" },
+                  { "id": "5", "text": "Edge Cases" }
+                ],
+                "parts": ["frontmatter", "body"]
+              },
+              "correct_answers": {
+                "frontmatter": ["1", "3"],
+                "body": ["2", "4", "5"]
+              }
+            },
+            {
+              "section_id": "2.2",
+              "section_title": "The Routing Description: Your Most Important Line",
+              "activity_type": "Spot-the-Flaw",
+              "instruction": "Identify what is wrong with this description and name the correct fix before continuing.",
+              "items": [
+                {
+                  "id": "sample",
+                  "text": "description: \"Assists enterprise analysts with competitive analysis and market overviews\nand pricing summaries.\""
+                }
+              ],
+              "correct_answers": {
+                "primary_flaw": "The description spans two lines. LLM routing parsers read the description as a single-line token; the second line is invisible to the parser.",
+                "fix": "Collapse to one continuous line with no newline characters.",
+                "secondary_flaw": "'Assists with' is a vague summary with no concrete trigger phrases or output shape."
+              }
+            },
+            {
+              "section_id": "2.3",
+              "section_title": "The Five Subsystems of a Skill Body",
+              "activity_type": "Match",
+              "instruction": "Match each subsystem to its primary purpose before continuing.",
+              "items": {
+                "subsystems": [
+                  { "id": "1", "text": "Reasoning Frameworks" },
+                  { "id": "2", "text": "Deterministic Output Specifications" },
+                  { "id": "3", "text": "Explicit Boundary Edge Cases" },
+                  { "id": "4", "text": "Pattern-Matching Exemplars" },
+                  { "id": "5", "text": "Contextual Economy" }
+                ],
+                "purposes": [
+                  { "id": "A", "text": "Replaces default model hallucination with defined policy at constraint boundaries" },
+                  { "id": "B", "text": "Keeps the file under 150 lines to prevent context overrun" },
+                  { "id": "C", "text": "Encodes decision principles that allow generalization to unanticipated situations" },
+                  { "id": "D", "text": "Provides few-shot reference output to anchor model generation" },
+                  { "id": "E", "text": "Declares exact output schema for reliable downstream parsing" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "subsystem": "1", "purpose": "C" },
+                  { "subsystem": "2", "purpose": "E" },
+                  { "subsystem": "3", "purpose": "A" },
+                  { "subsystem": "4", "purpose": "D" },
+                  { "subsystem": "5", "purpose": "B" }
+                ]
+              }
+            },
+            {
+              "section_id": "2.4",
+              "section_title": "The Critical Constraint: 150-Line Maximum",
+              "activity_type": "Classify",
+              "instruction": "Classify each statement as the correct reason for the 150-line constraint or an incorrect reason, before continuing.",
+              "items": [
+                { "id": "A", "text": "Enterprise LLM gateways inject surrounding context, which can push a long skill past the model's attention horizon." },
+                { "id": "B", "text": "Longer files are harder for humans to read." },
+                { "id": "C", "text": "Version control systems have file size limits." },
+                { "id": "D", "text": "The constraint forces clarity — if you can't say it in 150 lines, the skill is probably doing too much." }
+              ],
+              "correct_answers": {
+                "correct_stated_in_section": ["A", "D"],
+                "incorrect_not_stated": ["B", "C"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Writing Your First Skill",
+          "activities": [
+            {
+              "section_id": "3.1",
+              "section_title": "The Description Formula",
+              "activity_type": "Cover-and-Reconstruct",
+              "instruction": "Cover the section and write the complete description formula template from memory before continuing.",
+              "prompts": [
+                "What are the required components of the description formula?",
+                "Write one compliant example description using the formula."
+              ],
+              "correct_answers": {
+                "formula": "description: \"Triggers on [TRIGGER PHRASE 1] or [TRIGGER PHRASE 2] to [ACTION VERB] [OUTPUT ARTIFACT]: [SCHEMA DETAILS]. [KEY CONSTRAINTS].\"",
+                "example_note": "Any compliant example accepted. E.g.: \"Triggers on 'summarize meeting' or 'meeting notes' to output a structured markdown summary: Attendees | Key Decisions | Action Items (owner + due date). Maximum 300 words.\""
+              }
+            },
+            {
+              "section_id": "3.2",
+              "section_title": "Worked Example: Building a Skill From Scratch",
+              "activity_type": "Sequence",
+              "instruction": "Put the six steps for building a skill from scratch in the correct order before continuing.",
+              "items": [
+                { "id": "A", "text": "Write the Output Specification" },
+                { "id": "B", "text": "Add a Pattern-Matching Exemplar" },
+                { "id": "C", "text": "Define the trigger and output in plain English" },
+                { "id": "D", "text": "Write the Reasoning Framework" },
+                { "id": "E", "text": "Document Edge Cases" },
+                { "id": "F", "text": "Write the description (one line)" }
+              ],
+              "correct_answers": {
+                "order": ["C", "F", "D", "A", "E", "B"],
+                "labels": [
+                  "Step 1: Define trigger/output",
+                  "Step 2: Write description",
+                  "Step 3: Reasoning Framework",
+                  "Step 4: Output Spec",
+                  "Step 5: Edge Cases",
+                  "Step 6: Exemplar"
+                ]
+              }
+            },
+            {
+              "section_id": "3.3",
+              "section_title": "Common Mistakes and How to Fix Them",
+              "activity_type": "Spot-the-Flaw",
+              "instruction": "Identify which named mistake pattern each example represents before continuing.",
+              "items": [
+                { "id": "1", "text": "description: \"Helps users with their meetings and notes.\"" },
+                { "id": "2", "text": "## Instructions\\nStep 1: Read the input.\\nStep 2: Find names.\\nStep 3: Find verbs near names." },
+                { "id": "3", "text": "## Output\\nWrite up the action items you find in the transcript." }
+              ],
+              "correct_answers": [
+                { "item": "1", "mistake": "Mistake 1: The Vague Trigger", "explanation": "No semantic anchor; matches almost everything." },
+                { "item": "2", "mistake": "Mistake 2: The Procedural Body", "explanation": "Step-by-step instructions break at unanticipated situations." },
+                { "item": "3", "mistake": "Mistake 3: The Ambiguous Output", "explanation": "No schema; downstream agents cannot parse consistently." }
+              ]
+            },
+            {
+              "section_id": "3.4",
+              "section_title": "Practice Assignment",
+              "activity_type": "Classify",
+              "instruction": "Classify each element as required or optional in a production-grade skill before continuing.",
+              "items": [
+                { "id": "A", "text": "A single-line description with concrete trigger phrases" },
+                { "id": "B", "text": "A Reasoning Framework" },
+                { "id": "C", "text": "A Deterministic Output Specification" },
+                { "id": "D", "text": "Three or more Edge Cases" },
+                { "id": "E", "text": "One Example Output (exemplar)" },
+                { "id": "F", "text": "A file under 150 lines" }
+              ],
+              "correct_answers": {
+                "required": ["A", "B", "C", "D", "E", "F"],
+                "optional": [],
+                "note": "All six are required per the assignment rubric for a production-grade skill. The exemplar (E) may be inline or a separate file."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "level-2",
+      "title": "Agentic Contracts & Composable Pipelines",
+      "modules": [
+        {
+          "id": "m4",
+          "title": "Agentic Contracts: Skills Built for Autonomous Agents",
+          "activities": [
+            {
+              "section_id": "4.1",
+              "section_title": "The Shift From Human-Directed to Agent-Directed Skills",
+              "activity_type": "Match",
+              "instruction": "Match each phrase to the correct analogy target (recipe or API) before continuing.",
+              "items": {
+                "phrases": [
+                  { "id": "1", "text": "'add salt to taste'" },
+                  { "id": "2", "text": "'salt: float, grams, range 0.0–5.0, default 2.0'" },
+                  { "id": "3", "text": "A human cook adjusting with judgment" },
+                  { "id": "4", "text": "An automated pipeline that crashes on ambiguous input" }
+                ],
+                "targets": ["Recipe", "API", "Human-directed skill consumer", "Agent-directed skill consumer"]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "phrase": "1", "target": "Recipe",                          "explanation": "ambiguous, judgment-dependent" },
+                  { "phrase": "2", "target": "API",                             "explanation": "typed, ranged, defaulted — fully specified" },
+                  { "phrase": "3", "target": "Human-directed skill consumer",   "explanation": null },
+                  { "phrase": "4", "target": "Agent-directed skill consumer",   "explanation": null }
+                ]
+              }
+            },
+            {
+              "section_id": "4.2",
+              "section_title": "The Agentic SLA Contract",
+              "activity_type": "Match",
+              "instruction": "Match each SLA Contract block to what it declares before continuing.",
+              "items": {
+                "blocks": [
+                  { "id": "1", "text": "Input Contract" },
+                  { "id": "2", "text": "Output Contract" },
+                  { "id": "3", "text": "Dependency Contract" },
+                  { "id": "4", "text": "Downstream Assumption Contract" }
+                ],
+                "declarations": [
+                  { "id": "A", "text": "What the calling agent can reliably expect from this skill's output" },
+                  { "id": "B", "text": "Upstream preconditions (encoding, format, quality) that must hold" },
+                  { "id": "C", "text": "Required and optional input fields, types, formats, and constraints" },
+                  { "id": "D", "text": "All possible output schemas including success paths and STATUS_CODE failure states" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "block": "1", "declaration": "C" },
+                  { "block": "2", "declaration": "D" },
+                  { "block": "3", "declaration": "B" },
+                  { "block": "4", "declaration": "A" }
+                ]
+              }
+            },
+            {
+              "section_id": "4.3",
+              "section_title": "Worked Example: Human Skill vs. Agentic Skill",
+              "activity_type": "Spot-the-Flaw",
+              "instruction": "The agentic skill output contract reads: 'If no items found, explain politely that the query returned nothing.' Identify the flaw before continuing.",
+              "items": [
+                {
+                  "id": "sample",
+                  "text": "Output Contract excerpt: 'If no action items found, explain politely that the query returned no results.'"
+                }
+              ],
+              "correct_answers": {
+                "flaw": "Natural language failure messages cannot be parsed by downstream agents.",
+                "fix": "Failure states must be STATUS_CODEs (e.g., STATUS: NO_ITEMS_FOUND), not prose explanations."
+              }
+            }
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Composability: Building Multi-Skill Pipelines",
+          "activities": [
+            {
+              "section_id": "5.1",
+              "section_title": "What Is Composability?",
+              "activity_type": "Cover-and-Reconstruct",
+              "instruction": "Cover the section and write the definition of composability and name the most dangerous property of composability failures before continuing.",
+              "prompts": [
+                "Define composability in one sentence.",
+                "What makes composability failures especially dangerous?"
+              ],
+              "correct_answers": {
+                "composability_definition": "The property where the output of Skill A natively serves as the input to Skill B without human intervention, data transformation, or re-prompting.",
+                "danger": "Composability failures are silent — the pipeline continues running with subtly corrupted data, producing plausible but wrong results."
+              }
+            },
+            {
+              "section_id": "5.2",
+              "section_title": "Designing for Handoff",
+              "activity_type": "Spot-the-Flaw",
+              "instruction": "Skill Alpha outputs 3-field pipe-delimited rows: owner│action│due_date_iso. Skill Beta expects 4-field rows: owner│action│due_date_iso│urgency_score. Identify the design flaw and the correct fix before continuing.",
+              "items": [
+                { "id": "alpha", "text": "Skill Alpha Output Contract: pipe-delimited rows: owner│action│due_date_iso" },
+                { "id": "beta",  "text": "Skill Beta Input Contract:  pipe-delimited rows: owner│action│due_date_iso│urgency_score" }
+              ],
+              "correct_answers": {
+                "flaw": "Schema mismatch — Alpha outputs 3 fields, Beta expects 4. Beta receives malformed input on every row.",
+                "fix": "Add a placeholder urgency_score field (value: 0) to Skill Alpha's output so the schema is always 4 fields. Beta reads urgency_score == 0 as 'unscored' and populates it."
+              }
+            },
+            {
+              "section_id": "5.3",
+              "section_title": "The Data Flow Diagram",
+              "activity_type": "Sequence",
+              "instruction": "Put the three pipeline stages in the correct processing order before continuing.",
+              "items": [
+                { "id": "A", "text": "SKILL BETA: urgency-scorer — populates urgency_score 1-5, sorts output" },
+                { "id": "B", "text": "INPUT: Raw meeting transcript (plain text, UTF-8)" },
+                { "id": "C", "text": "SKILL ALPHA: meeting-action-extractor-v2 — outputs owner│action│due_date_iso│urgency_score(=0)" }
+              ],
+              "correct_answers": {
+                "order": ["B", "C", "A"],
+                "labels": ["Input", "Skill Alpha extracts and structures", "Skill Beta scores and sorts"]
+              }
+            },
+            {
+              "section_id": "5.4",
+              "section_title": "When NOT to Use a Skill: The Deterministic Script Rule",
+              "activity_type": "Classify",
+              "instruction": "Classify each task as 'Use a Skill' or 'Use a Script' before continuing.",
+              "items": [
+                { "id": "A", "text": "Extracting named entities from a legal document" },
+                { "id": "B", "text": "Converting a date string from ISO 8601 to US format" },
+                { "id": "C", "text": "Scoring customer support tickets by urgency" },
+                { "id": "D", "text": "Inserting a validated record into a production database" },
+                { "id": "E", "text": "Summarizing variable-length quarterly reports" },
+                { "id": "F", "text": "Sending a confirmation email via SMTP" }
+              ],
+              "correct_answers": {
+                "use_a_skill": ["A", "C", "E"],
+                "use_a_script": ["B", "D", "F"],
+                "skill_rationale": "Require general-purpose reasoning or judgment",
+                "script_rationale": "Require exact, deterministic execution with no variance"
+              }
+            }
+          ]
+        },
+        {
+          "id": "m6",
+          "title": "Debugging Skills and Identifying Failure Modes",
+          "activities": [
+            {
+              "section_id": "6.1",
+              "section_title": "A Taxonomy of Skill Failures",
+              "activity_type": "Match",
+              "instruction": "Match each symptom to the correct failure type before continuing.",
+              "items": {
+                "symptoms": [
+                  { "id": "1", "text": "Skill never invokes despite a matching user query; agent uses default behavior" },
+                  { "id": "2", "text": "Skill invokes correctly but output structure varies between runs; downstream parsing intermittently fails" },
+                  { "id": "3", "text": "Upstream skill succeeds; downstream skill receives input but emits INVALID_INPUT silently" }
+                ],
+                "failure_types": [
+                  { "id": "A", "text": "Pipeline Break" },
+                  { "id": "B", "text": "Routing Failure" },
+                  { "id": "C", "text": "Output Drift" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "symptom": "1", "failure_type": "B" },
+                  { "symptom": "2", "failure_type": "C" },
+                  { "symptom": "3", "failure_type": "A" }
+                ]
+              }
+            },
+            {
+              "section_id": "6.2",
+              "section_title": "The Debugging Checklist",
+              "activity_type": "Sequence",
+              "instruction": "Put the first four debugging checklist items in the correct order before continuing.",
+              "items": [
+                { "id": "A", "text": "Do all failure paths emit machine-parseable STATUS_CODEs?" },
+                { "id": "B", "text": "Is the description on exactly one line? (Open the raw file, not a rendered preview)" },
+                { "id": "C", "text": "Is the Output Spec entirely deterministic? Remove any prose-style output instructions." },
+                { "id": "D", "text": "Do the trigger phrases match the actual language the calling agent uses?" }
+              ],
+              "correct_answers": {
+                "order": ["B", "D", "C", "A"],
+                "labels": [
+                  "Check description format",
+                  "Check trigger phrase match",
+                  "Check output determinism",
+                  "Check STATUS_CODE compliance"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "level-3",
+      "title": "Enterprise Governance & Quantitative Testing",
+      "modules": [
+        {
+          "id": "m7",
+          "title": "The Three-Tier Governance Hierarchy",
+          "activities": [
+            {
+              "section_id": "7.1",
+              "section_title": "Why Governance Matters",
+              "activity_type": "Cover-and-Reconstruct",
+              "instruction": "Cover the section and state the single question that governance answers for every skill before continuing.",
+              "prompts": [
+                "What is the one governance question that applies to every skill in a repository?",
+                "Name three specific problems that an ungoverned skills repository creates."
+              ],
+              "correct_answers": {
+                "governance_question": "Who owns it, who can change it, and where does it live?",
+                "problems_any_three_of": [
+                  "Skills conflict",
+                  "Skills override each other",
+                  "Skills become stale without notice",
+                  "Critical single points of failure when the author leaves the organization"
+                ]
+              }
+            },
+            {
+              "section_id": "7.2",
+              "section_title": "The Three Tiers",
+              "activity_type": "Match",
+              "instruction": "Match each skill example to its correct governance tier before continuing.",
+              "items": {
+                "skills": [
+                  { "id": "1", "text": "Brand voice profile" },
+                  { "id": "2", "text": "M&A due-diligence framework" },
+                  { "id": "3", "text": "Personal report formatting shortcut" },
+                  { "id": "4", "text": "Regulatory compliance parameters" },
+                  { "id": "5", "text": "Sales qualification criteria" }
+                ],
+                "tiers": [
+                  { "id": "A", "text": "Tier 1 — Enterprise Admin" },
+                  { "id": "B", "text": "Tier 2 — Business-Unit Team" },
+                  { "id": "C", "text": "Tier 3 — Individual Contributor" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "skill": "1", "tier": "A", "explanation": "Brand voice = org-wide standard" },
+                  { "skill": "2", "tier": "B", "explanation": "M&A framework = team methodology" },
+                  { "skill": "3", "tier": "C", "explanation": "Personal shortcut = individual productivity" },
+                  { "skill": "4", "tier": "A", "explanation": "Compliance parameters = org-wide standard" },
+                  { "skill": "5", "tier": "B", "explanation": "Sales qualification = team methodology" }
+                ]
+              }
+            },
+            {
+              "section_id": "7.3",
+              "section_title": "Tier Promotion",
+              "activity_type": "Sequence",
+              "instruction": "Put the four tier promotion steps in the correct order before continuing.",
+              "items": [
+                { "id": "A", "text": "Validate: the domain expert who used the skill reviews the generalized version for correctness." },
+                { "id": "B", "text": "Identify: team leads review Tier 3 skills quarterly for patterns that indicate shared value." },
+                { "id": "C", "text": "Promote: the skill moves to the team repository and governance controls apply." },
+                { "id": "D", "text": "Generalize: the skill is rewritten to remove personal idiosyncrasies." }
+              ],
+              "correct_answers": {
+                "order": ["B", "D", "A", "C"],
+                "labels": ["Identify", "Generalize", "Validate", "Promote"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "m8",
+          "title": "Quantitative Testing: Why Manual Testing Fails",
+          "activities": [
+            {
+              "section_id": "8.1",
+              "section_title": "The Transformer Sensitivity Problem",
+              "activity_type": "Cover-and-Reconstruct",
+              "instruction": "Cover the section and explain in one sentence why changing a single word in one skill can degrade an unrelated skill before continuing.",
+              "prompts": [
+                "Why does a vocabulary change in Skill A affect the output of Skill B?",
+                "What does manual testing miss that quantitative regression testing catches?"
+              ],
+              "correct_answers": {
+                "mechanism": "Transformers process the entire skills context as a unified semantic field; a vocabulary change shifts probability distributions across all downstream token generation — including adjacent skills sharing the same context.",
+                "manual_vs_quantitative": "Manual testing catches only the changed skill. Quantitative regression testing catches cross-skill effects from context sensitivity."
+              }
+            },
+            {
+              "section_id": "8.2",
+              "section_title": "The Quantitative Testing Harness",
+              "activity_type": "Classify",
+              "instruction": "Classify each rubric criterion as objective (acceptable) or subjective (not acceptable) before continuing.",
+              "items": [
+                { "id": "A", "text": "'Score 5 if the output matches schema exactly: all fields present, correct sort order, no extra text.'" },
+                { "id": "B", "text": "'Score 5 if the response looks well-structured and professional.'" },
+                { "id": "C", "text": "'Score 3 if manual field extraction is possible but automation requires additional handling.'" },
+                { "id": "D", "text": "'Score 3 if it seems mostly right.'" }
+              ],
+              "correct_answers": {
+                "objective_acceptable": ["A", "C"],
+                "subjective_not_acceptable": ["B", "D"],
+                "objective_rationale": "Verifiable by a parser or structural inspection",
+                "subjective_rationale": "Cannot be objectively verified; introduce evaluator bias"
+              }
+            },
+            {
+              "section_id": "8.3",
+              "section_title": "Worked Example: A Testing Matrix",
+              "activity_type": "Match",
+              "instruction": "Match each test case description to its correct test type before continuing.",
+              "items": {
+                "test_cases": [
+                  { "id": "1", "text": "500-word transcript, 3 clear action items, all owners named, all dates explicit" },
+                  { "id": "2", "text": "Input is a recipe, not a meeting transcript" },
+                  { "id": "3", "text": "Transcript where two names appear near the same verb" },
+                  { "id": "4", "text": "A test run on the Tier 1 brand voice skill after updating the action extractor" }
+                ],
+                "test_types": [
+                  { "id": "A", "text": "Regression (Adjacent)" },
+                  { "id": "B", "text": "Happy Path" },
+                  { "id": "C", "text": "Failure Path" },
+                  { "id": "D", "text": "Edge Case — Ambiguous Owner" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "test_case": "1", "test_type": "B" },
+                  { "test_case": "2", "test_type": "C" },
+                  { "test_case": "3", "test_type": "D" },
+                  { "test_case": "4", "test_type": "A" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "m9",
+          "title": "Enterprise Deployment: Continuity, Version Control, and Scale",
+          "activities": [
+            {
+              "section_id": "9.1",
+              "section_title": "The Version Control Imperative",
+              "activity_type": "Match",
+              "instruction": "Match each repository directory to its correct owner/purpose before continuing.",
+              "items": {
+                "directories": [
+                  { "id": "1", "text": "tier-1/" },
+                  { "id": "2", "text": "tier-2/finance/" },
+                  { "id": "3", "text": "tier-3/alice.chen/" },
+                  { "id": "4", "text": "tests/baselines/" }
+                ],
+                "owners_purposes": [
+                  { "id": "A", "text": "Individual contributor personal skills" },
+                  { "id": "B", "text": "v1 scores used for regression comparison" },
+                  { "id": "C", "text": "Finance team methodology skills" },
+                  { "id": "D", "text": "Enterprise admin-owned org-wide standards" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "directory": "1", "owner_purpose": "D" },
+                  { "directory": "2", "owner_purpose": "C" },
+                  { "directory": "3", "owner_purpose": "A" },
+                  { "directory": "4", "owner_purpose": "B" }
+                ]
+              }
+            },
+            {
+              "section_id": "9.2",
+              "section_title": "Continuity Planning",
+              "activity_type": "Match",
+              "instruction": "Match each continuity risk to its correct mitigation before continuing.",
+              "items": {
+                "risks": [
+                  { "id": "1", "text": "Skill Orphaning" },
+                  { "id": "2", "text": "Silent Regression" },
+                  { "id": "3", "text": "Tier-3 Loss" }
+                ],
+                "mitigations": [
+                  { "id": "A", "text": "Policy requiring all skills committed to team repository; enforced via offboarding checklist" },
+                  { "id": "B", "text": "Quarterly documentation reviews, skill promotion review, README files per skill" },
+                  { "id": "C", "text": "Automated regression test suite running on every model update; rollback playbook" }
+                ]
+              },
+              "correct_answers": {
+                "pairs": [
+                  { "risk": "1", "mitigation": "B", "explanation": "Skill Orphaning → documentation reviews + promotion process" },
+                  { "risk": "2", "mitigation": "C", "explanation": "Silent Regression → automated tests + rollback" },
+                  { "risk": "3", "mitigation": "A", "explanation": "Tier-3 Loss → commit policy + offboarding enforcement" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

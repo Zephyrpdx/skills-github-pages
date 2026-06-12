@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "title": "Flashcard Content Supplement",
+    "curriculum": "Agent-Readable Skills Infrastructure",
+    "version": 1,
+    "description": "Atomic flashcard sets (12–14 per module) across all nine curriculum modules. Includes Leitner Box promotion logic in the implementation_notes section."
+  },
+  "leitner_system": {
+    "description": "Basic/Advanced cards function as a two-stage learning unit.",
+    "advanced_introduction_trigger": "Basic card answered correctly twice in a row while in Box 4 (once to promote to Box 4, once more on its 7-day review).",
+    "advanced_failure_reinstatement": "If the Advanced card is answered incorrectly twice consecutively, the paired Basic card is reinstated to Box 2.",
+    "box_review_intervals": {
+      "box_1_new": "Next session",
+      "box_2": "2 days",
+      "box_3": "4 days",
+      "box_4": "7 days",
+      "retired": "Removed from active rotation"
+    }
+  },
+  "modules": [
+    {
+      "id": "m1",
+      "level": 1,
+      "title": "Why Skills Matter: The Problem With Prompts",
+      "cards": [
+        { "id": "fc-m1-01", "tier": "Basic",    "front": "What is a brittle prompt?",                                                                          "back": "An ad-hoc conversational prompt that lacks a deterministic behavioral contract." },
+        { "id": "fc-m1-02", "tier": "Basic",    "front": "What is a skill.markdown file?",                                                                     "back": "A structured markdown file providing a deterministic behavioral contract for an LLM to execute." },
+        { "id": "fc-m1-03", "tier": "Basic",    "front": "Where must a skill.markdown file be stored?",                                                        "back": "In a dedicated, version-controlled directory." },
+        { "id": "fc-m1-04", "tier": "Basic",    "front": "What four components must a skill primitive define?",                                                 "back": "A clear name, defined inputs, specified outputs, and documented edge cases." },
+        { "id": "fc-m1-05", "tier": "Basic",    "front": "What is the primary benefit of storing skills in version control?",                                   "back": "It makes them auditable, testable, updatable, and recoverable." },
+        { "id": "fc-m1-06", "tier": "Basic",    "front": "What is the 'skill as a ZIP file' analogy?",                                                         "back": "A skill condenses complex behavioral instructions into a single reliably-routable primitive." },
+        { "id": "fc-m1-07", "tier": "Basic",    "front": "How does a skill primitive affect an LLM's cognitive load?",                                         "back": "It reduces working memory load in the same way chunking does for human memory." },
+        { "id": "fc-m1-08", "tier": "Basic",    "front": "Why is a skill.markdown written in markdown?",                                                       "back": "So that an LLM can natively read and execute the behavioral contract." },
+        { "id": "fc-m1-09", "tier": "Advanced", "front": "Why is a conversational prompt considered brittle even if it currently produces the right output?",   "back": "It lacks a guaranteed output schema, meaning subtle vendor model updates can silently alter its format.", "paired_basic": "fc-m1-02" },
+        { "id": "fc-m1-10", "tier": "Advanced", "front": "How does a skill primitive prevent prompt decay when team members change?",                           "back": "It replaces individual conversational phrasing with a single versioned trigger and deterministic schema.", "paired_basic": "fc-m1-01" },
+        { "id": "fc-m1-11", "tier": "Advanced", "front": "What is the structural analogy between a skill.markdown file and a software function?",               "back": "Both have a clearly defined scope, explicit input constraints, and strict output contracts.", "paired_basic": "fc-m1-02" },
+        { "id": "fc-m1-12", "tier": "Advanced", "front": "Where does the software function analogy for skills break down?",                                     "back": "LLM execution introduces stochastic variance, requiring explicit Edge Cases that compiled code handles mechanically.", "paired_basic": "fc-m1-04" }
+      ]
+    },
+    {
+      "id": "m2",
+      "level": 1,
+      "title": "Anatomy of a Skill Primitive",
+      "cards": [
+        { "id": "fc-m2-01", "tier": "Basic",    "front": "What are the two structural parts of a skill.markdown file?",                                                        "back": "A frontmatter metadata section and an operational body section." },
+        { "id": "fc-m2-02", "tier": "Basic",    "front": "What is the Routing Description?",                                                                                  "back": "The single-line frontmatter field an LLM gateway uses to match user intent to a skill." },
+        { "id": "fc-m2-03", "tier": "Basic",    "front": "What two elements must a Routing Description contain?",                                                             "back": "Concrete trigger phrases and the specified output shape." },
+        { "id": "fc-m2-04", "tier": "Basic",    "front": "Why must the description field be a single continuous line?",                                                       "back": "LLM routing parsers process the description as a single-line token." },
+        { "id": "fc-m2-05", "tier": "Basic",    "front": "What is the 150-Line Constraint?",                                                                                  "back": "The maximum recommended length for a skill.markdown file." },
+        { "id": "fc-m2-06", "tier": "Basic",    "front": "What are the five subsystems of a skill body?",                                                                     "back": "Reasoning Frameworks, Deterministic Output Specifications, Edge Cases, Exemplars, and Contextual Economy." },
+        { "id": "fc-m2-07", "tier": "Basic",    "front": "What is the purpose of the Reasoning Framework subsystem?",                                                        "back": "To encode declarative decision principles that allow the model to generalize to unanticipated inputs." },
+        { "id": "fc-m2-08", "tier": "Basic",    "front": "What does a Deterministic Output Specification declare?",                                                           "back": "The exact schema of the skill output, including column names, row counts, and field lengths." },
+        { "id": "fc-m2-09", "tier": "Basic",    "front": "What is Edge Case Documentation?",                                                                                  "back": "Explicit instructions that replace the model's default hallucination behavior with defined policy." },
+        { "id": "fc-m2-10", "tier": "Basic",    "front": "What is a Pattern-Matching Exemplar?",                                                                              "back": "Static example output stored in the skill directory to provide few-shot performance anchoring." },
+        { "id": "fc-m2-11", "tier": "Advanced", "front": "What failure occurs if a text editor auto-wraps a routing description across multiple lines?",                      "back": "Routing failure. The parser reads only the first line, rendering the remaining routing criteria invisible.", "paired_basic": "fc-m2-04" },
+        { "id": "fc-m2-12", "tier": "Advanced", "front": "Why does the 150-Line Constraint exist in production environments?",                                                "back": "Enterprise gateways inject surrounding system context at runtime; oversized skills cause context window overrun.", "paired_basic": "fc-m2-05" },
+        { "id": "fc-m2-13", "tier": "Advanced", "front": "Why are step-by-step procedural instructions a reliability risk in a skill body?",                                  "back": "They are brittle. The model has no decision policy to handle inputs that fall between the enumerated steps.", "paired_basic": "fc-m2-07" },
+        { "id": "fc-m2-14", "tier": "Advanced", "front": "A skill requires a 60-line exemplar, pushing the file to 170 lines. What is the structural fix?",                   "back": "Store the exemplar as a separate text file in the skill directory to maintain the 150-line Contextual Economy constraint.", "paired_basic": "fc-m2-05" }
+      ]
+    },
+    {
+      "id": "m3",
+      "level": 1,
+      "title": "Writing Your First Skill",
+      "cards": [
+        { "id": "fc-m3-01", "tier": "Basic",    "front": "What is the standard formula for a Routing Description?",                                                              "back": "\"Triggers on [TRIGGER PHRASE] to [ACTION VERB] [OUTPUT ARTIFACT]: [SCHEMA DETAILS].\"" },
+        { "id": "fc-m3-02", "tier": "Basic",    "front": "What is the very first step when building a skill from scratch?",                                                     "back": "Define the trigger condition and exact output shape in plain English." },
+        { "id": "fc-m3-03", "tier": "Basic",    "front": "What is 'Mistake 1: The Vague Trigger'?",                                                                            "back": "Using semantically diffuse phrases like \"helps users\" that fail to provide a routing anchor." },
+        { "id": "fc-m3-04", "tier": "Basic",    "front": "What is 'Mistake 2: The Procedural Body'?",                                                                          "back": "Writing sequential \"Step 1, Step 2\" instructions instead of declarative rules." },
+        { "id": "fc-m3-05", "tier": "Basic",    "front": "What is 'Mistake 3: The Ambiguous Output'?",                                                                         "back": "Requesting output with vague verbs like \"write up\" instead of specifying an exact schema." },
+        { "id": "fc-m3-06", "tier": "Basic",    "front": "Why do downstream agents require a Deterministic Output Specification?",                                              "back": "Because agents parse output mechanically and cannot tolerate structural ambiguity." },
+        { "id": "fc-m3-07", "tier": "Basic",    "front": "What happens when a model encounters a situation without a documented Edge Case?",                                    "back": "It defaults to hallucinating plausible-sounding, but uncontrolled, output." },
+        { "id": "fc-m3-08", "tier": "Basic",    "front": "Should formatting constraints like \"No markdown headers\" be included in the Output Specification?",                 "back": "Yes. Negative constraints are critical for maintaining strict schema adherence." },
+        { "id": "fc-m3-09", "tier": "Advanced", "front": "A description reads: 'Assists with competitive analysis.' Name its two critical flaws.",                              "back": "It lacks concrete trigger phrases and fails to specify an output artifact/shape.", "paired_basic": "fc-m3-03" },
+        { "id": "fc-m3-10", "tier": "Advanced", "front": "How does specifying output shape directly in the Routing Description improve skill performance?",                     "back": "It provides the model with a clear goal state immediately upon triggering, reducing format drift.", "paired_basic": "fc-m3-01" },
+        { "id": "fc-m3-11", "tier": "Advanced", "front": "An author writes 'Step 1: Read text. Step 2: Extract tasks.' How does a Reasoning Framework fix this flaw?",         "back": "It replaces brittle sequence with declarative logic (e.g., 'Action = explicitly stated task'), allowing generalization to novel inputs.", "paired_basic": "fc-m3-04" },
+        { "id": "fc-m3-12", "tier": "Advanced", "front": "A skill must process input transcripts of variable length up to 10,000 words. How should this be handled?",          "back": "Explicitly define a truncation policy within the Edge Cases subsystem (e.g., 'Process first 5,000 words only').", "paired_basic": "fc-m3-07" }
+      ]
+    },
+    {
+      "id": "m4",
+      "level": 2,
+      "title": "Agentic Contracts",
+      "cards": [
+        { "id": "fc-m4-01", "tier": "Basic",    "front": "What specific consumer are Level 2 skills designed for?",                                                             "back": "Autonomous agents executing pipelines." },
+        { "id": "fc-m4-02", "tier": "Basic",    "front": "What fundamentally shifts when designing for agents rather than humans?",                                             "back": "The skill becomes a strict API specification rather than a flexible set of instructions." },
+        { "id": "fc-m4-03", "tier": "Basic",    "front": "What are the four structural blocks of an Agentic SLA Contract?",                                                    "back": "Input Contract, Output Contract, Dependency Contract, and Downstream Assumption Contract." },
+        { "id": "fc-m4-04", "tier": "Basic",    "front": "What does an Input Contract declare?",                                                                               "back": "The exact input fields, their data types, formats, and whether they are required or optional." },
+        { "id": "fc-m4-05", "tier": "Basic",    "front": "What does an Output Contract declare?",                                                                              "back": "The guaranteed success schema and all defined machine-parseable failure states." },
+        { "id": "fc-m4-06", "tier": "Basic",    "front": "How must failure states be emitted in an agentic skill?",                                                            "back": "As machine-parseable STATUS_CODEs." },
+        { "id": "fc-m4-07", "tier": "Basic",    "front": "What does a Dependency Contract declare?",                                                                           "back": "Upstream preconditions like formatting or encoding that must hold for the skill to succeed." },
+        { "id": "fc-m4-08", "tier": "Basic",    "front": "What does a Downstream Assumption Contract declare?",                                                                "back": "Guarantees the calling agent can rely on, such as absolute sort orders or strict date formats." },
+        { "id": "fc-m4-09", "tier": "Advanced", "front": "Why must agentic skills return STATUS_CODEs instead of natural language error messages?",                            "back": "Automated pipelines crash when their mechanical parsing logic encounters conversational failure prose.", "paired_basic": "fc-m4-06" },
+        { "id": "fc-m4-10", "tier": "Advanced", "front": "Explain the 'recipe vs. API' analogy regarding agentic skill output.",                                               "back": "A recipe relies on human judgment ('add to taste'); an API requires strict, mechanical parameter specifications.", "paired_basic": "fc-m4-02" },
+        { "id": "fc-m4-11", "tier": "Advanced", "front": "A skill outputs a 'Date' field as a plain text string. What specific change makes this agent-ready?",                "back": "The Output Contract must specify a machine-parseable encoding format, such as ISO 8601.", "paired_basic": "fc-m4-05" },
+        { "id": "fc-m4-12", "tier": "Advanced", "front": "What is the operational consequence if a Dependency Contract (e.g., UTF-8 encoding) is violated?",                  "back": "The skill fails predictably via a STATUS_CODE rather than producing silent, corrupted output downstream.", "paired_basic": "fc-m4-07" }
+      ]
+    },
+    {
+      "id": "m5",
+      "level": 2,
+      "title": "Composability & Pipelines",
+      "cards": [
+        { "id": "fc-m5-01", "tier": "Basic",    "front": "What is composability in a skill pipeline?",                                                                          "back": "When an upstream skill's output natively serves as a downstream skill's input without human intervention." },
+        { "id": "fc-m5-02", "tier": "Basic",    "front": "What is a silent pipeline failure?",                                                                                 "back": "When a pipeline continues executing with subtly corrupted data without crashing or emitting an error." },
+        { "id": "fc-m5-03", "tier": "Basic",    "front": "Why are silent composability failures particularly dangerous?",                                                       "back": "They produce plausible but incorrect results that may only be caught much later by downstream consumers." },
+        { "id": "fc-m5-04", "tier": "Basic",    "front": "What is the core design rule for building composable pipelines?",                                                     "back": "Design Output Contracts first, then work backwards to design the Reasoning Framework." },
+        { "id": "fc-m5-05", "tier": "Basic",    "front": "What is the Placeholder Field strategy?",                                                                            "back": "Adding a default-value field to upstream output to maintain strict schema consistency for downstream consumers." },
+        { "id": "fc-m5-06", "tier": "Basic",    "front": "What is the Deterministic Script Rule?",                                                                             "back": "Pipeline steps requiring absolute, zero-variance execution must be hardwired scripts, not LLM skills." },
+        { "id": "fc-m5-07", "tier": "Basic",    "front": "What makes LLMs inappropriate for zero-tolerance deterministic tasks?",                                              "back": "Their inherent stochastic variance." },
+        { "id": "fc-m5-08", "tier": "Basic",    "front": "What is the purpose of a Data Flow Diagram in pipeline design?",                                                     "back": "To explicitly document the schema handoff points between skills." },
+        { "id": "fc-m5-09", "tier": "Advanced", "front": "Skill A outputs 3 fields. Skill B expects 4. How does the Placeholder Field strategy resolve this?",                "back": "Skill A adds a 4th field with a null/0 value, ensuring the structural schema perfectly matches Skill B's Input Contract.", "paired_basic": "fc-m5-05" },
+        { "id": "fc-m5-10", "tier": "Advanced", "front": "Why does 'output-first design' prevent silent composability failures?",                                               "back": "It forces the upstream skill's generation logic to perfectly conform to the exact structural requirements of the downstream consumer.", "paired_basic": "fc-m5-04" },
+        { "id": "fc-m5-11", "tier": "Advanced", "front": "A pipeline requires inserting validated records into a production database. Should this be an LLM skill? Justify.",  "back": "No. Inserting records has zero error tolerance, triggering the Deterministic Script Rule which mandates a hardwired script.", "paired_basic": "fc-m5-06" },
+        { "id": "fc-m5-12", "tier": "Advanced", "front": "A pipeline requires parsing a fixed-column legacy CSV. Why is this better suited for a Python script than a skill?", "back": "It requires exact deterministic execution without reasoning latitude, which falls under the Deterministic Script Rule.", "paired_basic": "fc-m5-06" }
+      ]
+    },
+    {
+      "id": "m6",
+      "level": 2,
+      "title": "Debugging Failure Modes",
+      "cards": [
+        { "id": "fc-m6-01", "tier": "Basic",    "front": "What are the three primary categories of skill failures?",                                                                                                "back": "Routing Failure, Output Drift, and Pipeline Break." },
+        { "id": "fc-m6-02", "tier": "Basic",    "front": "What defines a Routing Failure?",                                                                                                                       "back": "The skill never invokes despite a matching user query." },
+        { "id": "fc-m6-03", "tier": "Basic",    "front": "What defines Output Drift?",                                                                                                                            "back": "The skill invokes correctly, but its output structure varies unpredictably between runs." },
+        { "id": "fc-m6-04", "tier": "Basic",    "front": "What defines a Pipeline Break?",                                                                                                                        "back": "An upstream skill succeeds, but the downstream skill fails silently or emits an INVALID_INPUT status." },
+        { "id": "fc-m6-05", "tier": "Basic",    "front": "What is the most common cause of a Routing Failure?",                                                                                                   "back": "A vague or multi-line routing description." },
+        { "id": "fc-m6-06", "tier": "Basic",    "front": "What is the most common cause of Output Drift?",                                                                                                        "back": "An insufficiently deterministic Output Specification that leaves room for model interpretation." },
+        { "id": "fc-m6-07", "tier": "Basic",    "front": "What is the most common cause of a Pipeline Break?",                                                                                                    "back": "A schema mismatch between an upstream Output Contract and a downstream Input Contract." },
+        { "id": "fc-m6-08", "tier": "Basic",    "front": "What is the final step on the debugging checklist if all syntax is correct?",                                                                           "back": "Verify the file is under 150 lines and split the skill if necessary." },
+        { "id": "fc-m6-09", "tier": "Advanced", "front": "A skill description contains line breaks in the raw file. What precise mechanical failure does this cause?",                                            "back": "Routing Failure. The parser treats the description as a single token and ignores all criteria after the first line break.", "paired_basic": "fc-m6-02" },
+        { "id": "fc-m6-10", "tier": "Advanced", "front": "An agent intermittently fails to parse a skill's output. What is the first diagnostic step?",                                                           "back": "Diagnose as Output Drift; check the Output Specification for prose-style instructions and replace them with absolute schemas.", "paired_basic": "fc-m6-03" },
+        { "id": "fc-m6-11", "tier": "Advanced", "front": "Skill A and Skill B work perfectly in isolation. Chained together, Skill B emits INVALID_INPUT. What must you check?",                                  "back": "Diagnose as a Pipeline Break; conduct a field-by-field schema check including names, delimiters, and encoding formats.", "paired_basic": "fc-m6-04" },
+        { "id": "fc-m6-12", "tier": "Advanced", "front": "A developer replaces a sequential 10-step instruction list with a declarative decision policy. What failure mode does this prevent?",                   "back": "Output Drift caused by unhandled edge cases breaking the brittle procedural sequence.", "paired_basic": "fc-m6-03" }
+      ]
+    },
+    {
+      "id": "m7",
+      "level": 3,
+      "title": "The Three-Tier Governance Hierarchy",
+      "cards": [
+        { "id": "fc-m7-01", "tier": "Basic",    "front": "What are the three tiers in the skills governance hierarchy?",                                                            "back": "Tier 1 (Org Standards), Tier 2 (Team Methodology), and Tier 3 (Personal Workflow)." },
+        { "id": "fc-m7-02", "tier": "Basic",    "front": "Who owns Tier 1 skills?",                                                                                               "back": "Enterprise Administrators." },
+        { "id": "fc-m7-03", "tier": "Basic",    "front": "Who must author or review Tier 2 skills?",                                                                              "back": "Business-Unit Teams and Senior Practitioners." },
+        { "id": "fc-m7-04", "tier": "Basic",    "front": "Who owns Tier 3 skills?",                                                                                               "back": "Individual Contributors." },
+        { "id": "fc-m7-05", "tier": "Basic",    "front": "What type of knowledge is encoded in Tier 1 skills?",                                                                   "back": "Universally applicable standards like brand voice or formatting schemas." },
+        { "id": "fc-m7-06", "tier": "Basic",    "front": "What type of knowledge is encoded in Tier 2 skills?",                                                                   "back": "High-value institutional methodology specific to a domain." },
+        { "id": "fc-m7-07", "tier": "Basic",    "front": "What is the primary continuity risk associated with Tier 3 skills?",                                                    "back": "Storing them locally, meaning the skill is lost when the employee departs." },
+        { "id": "fc-m7-08", "tier": "Basic",    "front": "What is tier promotion?",                                                                                               "back": "The process of generalizing a high-value Tier 3 skill and elevating it to a Tier 2 team repository." },
+        { "id": "fc-m7-09", "tier": "Advanced", "front": "Why is it an operational risk for an IT administrator to author a Tier 2 M&A skill?",                                   "back": "They lack the domain expertise; the skill may be syntactically valid but operationally incorrect.", "paired_basic": "fc-m7-03" },
+        { "id": "fc-m7-10", "tier": "Advanced", "front": "How does tier promotion resolve personal continuity risk?",                                                             "back": "By stripping personal idiosyncrasies and committing the skill to a version-controlled team repository.", "paired_basic": "fc-m7-08" },
+        { "id": "fc-m7-11", "tier": "Advanced", "front": "Contrast the update cadence between Tier 1 and Tier 3 skills.",                                                         "back": "Tier 1 updates are infrequent and require formal change control; Tier 3 updates are rapid and highly iterative.", "paired_basic": "fc-m7-01" },
+        { "id": "fc-m7-12", "tier": "Advanced", "front": "A team member keeps five custom automation skills on their laptop desktop. What specific governance failure is this?",   "back": "Tier-3 Loss vulnerability. Individual contributor skills must be committed to a team monorepo to prevent a single point of failure.", "paired_basic": "fc-m7-07" }
+      ]
+    },
+    {
+      "id": "m8",
+      "level": 3,
+      "title": "Quantitative Testing",
+      "cards": [
+        { "id": "fc-m8-01", "tier": "Basic",    "front": "What is the Transformer Sensitivity Problem?",                                                                                          "back": "Small vocabulary changes in one skill shifting semantic probability distributions across other skills in the same context." },
+        { "id": "fc-m8-02", "tier": "Basic",    "front": "What are the three components of a quantitative testing harness?",                                                                     "back": "Static Test Cases, a Numeric Scoring Rubric, and a Version Comparison Protocol." },
+        { "id": "fc-m8-03", "tier": "Basic",    "front": "What defines a Static Test Case?",                                                                                                    "back": "A fixed, unchanging input-output pair used as a baseline for measuring all versions of a skill." },
+        { "id": "fc-m8-04", "tier": "Basic",    "front": "What are the three required categories for static test cases?",                                                                        "back": "Happy path, edge case, and failure path." },
+        { "id": "fc-m8-05", "tier": "Basic",    "front": "What scale is used in the numeric scoring rubric?",                                                                                   "back": "A 1 to 5 scale based on verifiable structural criteria." },
+        { "id": "fc-m8-06", "tier": "Basic",    "front": "What defines an objective rubric criterion?",                                                                                         "back": "It can be mathematically verified by a parser (e.g., zero parsing errors)." },
+        { "id": "fc-m8-07", "tier": "Basic",    "front": "What is the maximum acceptable score drop for any single test case during an update?",                                                "back": "1 point." },
+        { "id": "fc-m8-08", "tier": "Basic",    "front": "What output state earns a score of 1 on the numeric rubric?",                                                                         "back": "A prose explanation, apology, or hallucination containing no structured data." },
+        { "id": "fc-m8-09", "tier": "Advanced", "front": "A developer changes 'concise' to 'brief' in a Tier 1 skill, causing a Tier 2 skill to fail. What is the mechanism?",                 "back": "Transformer sensitivity. The vocabulary tweak shifted context-wide probabilities, triggering a cross-skill regression.", "paired_basic": "fc-m8-01" },
+        { "id": "fc-m8-10", "tier": "Advanced", "front": "Why must regression testing evaluate adjacent skills rather than just the updated skill?",                                            "back": "Because manual testing only catches isolated syntax errors, missing the systemic probability shifts that impact shared context.", "paired_basic": "fc-m8-01" },
+        { "id": "fc-m8-11", "tier": "Advanced", "front": "A rubric reads: 'Score 5 if the tone is highly professional.' Why does this invalidate the test harness?",                            "back": "It relies on subjective evaluator bias, preventing consistent, automated apples-to-apples version comparisons.", "paired_basic": "fc-m8-06" },
+        { "id": "fc-m8-12", "tier": "Advanced", "front": "If a proposed skill update causes an adjacent skill's test case to drop by 3 points, what is the protocol response?",                "back": "Halt deployment. The cross-skill regression exceeds the threshold and must be investigated or compensated for.", "paired_basic": "fc-m8-07" }
+      ]
+    },
+    {
+      "id": "m9",
+      "level": 3,
+      "title": "Enterprise Deployment",
+      "cards": [
+        { "id": "fc-m9-01", "tier": "Basic",    "front": "What is the Version Control Imperative?",                                                                                                    "back": "The non-negotiable requirement that all skills at every tier be committed to a version-controlled repository." },
+        { "id": "fc-m9-02", "tier": "Basic",    "front": "Why are skills treated as organizational intellectual property?",                                                                         "back": "They encode operational logic and institutional methodology equivalent to source code." },
+        { "id": "fc-m9-03", "tier": "Basic",    "front": "What are the three enterprise continuity risks for deployed skills?",                                                                      "back": "Skill Orphaning, Silent Regression, and Tier-3 Loss." },
+        { "id": "fc-m9-04", "tier": "Basic",    "front": "What triggers Skill Orphaning?",                                                                                                         "back": "The departure of the only senior practitioner who understands the methodology of a Tier 2 skill." },
+        { "id": "fc-m9-05", "tier": "Basic",    "front": "What triggers a Silent Regression in enterprise deployment?",                                                                            "back": "A vendor model update that degrades skill output quality without triggering an explicit error." },
+        { "id": "fc-m9-06", "tier": "Basic",    "front": "What triggers Tier-3 Loss?",                                                                                                            "back": "An employee leaving the organization with high-value workflow skills stored only on personal hardware." },
+        { "id": "fc-m9-07", "tier": "Basic",    "front": "What is the primary mitigation for Skill Orphaning?",                                                                                    "back": "Quarterly documentation reviews and requiring explanatory README files detailing the business context." },
+        { "id": "fc-m9-08", "tier": "Basic",    "front": "What is the primary mitigation for Silent Regressions?",                                                                                "back": "Running automated quantitative regression suites against the new model before deploying the update." },
+        { "id": "fc-m9-09", "tier": "Advanced", "front": "Why does an org-skills monorepo explicitly require a tier-3 directory?",                                                                "back": "To provide a designated location for individual contributor skills, removing the pressure for risky local storage.", "paired_basic": "fc-m9-06" },
+        { "id": "fc-m9-10", "tier": "Advanced", "front": "An LLM model update causes 2 of 6 test cases for a Tier 2 skill to drop to a score of 2. What is the operational response?",          "back": "Do not deploy the model update for this gateway. Invoke the rollback playbook and investigate the regressions.", "paired_basic": "fc-m9-05" },
+        { "id": "fc-m9-11", "tier": "Advanced", "front": "Why is 'best practice' an inadequate descriptor for version-controlling skill infrastructure?",                                          "back": "Without version control, skills completely lack auditability, recoverability, and transferability — making it a mandatory structural requirement.", "paired_basic": "fc-m9-01" },
+        { "id": "fc-m9-12", "tier": "Advanced", "front": "How does an offboarding checklist mitigate Tier-3 continuity risk?",                                                                    "back": "By enforcing the policy that all locally developed automations must be pushed to the team monorepo before an employee's access is revoked.", "paired_basic": "fc-m9-06" }
+      ]
+    }
+  ]
+}
